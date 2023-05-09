@@ -13,18 +13,18 @@ async function bootstrap() {
   const host = configService.get('RABBITMQ_HOST');
   const queueName = configService.get('RABBITMQ_QUEUE_NAME');
  
-  await app.connectMicroservice<MicroserviceOptions>({
-    transport: Transport.RMQ,
-    options: {
-      urls: [`amqp://${user}:${password}@${host}`],
-      queue: queueName,
-      queueOptions: {
-        durable: true,
-      },
-    },
-  });
+  // await app.connectMicroservice<MicroserviceOptions>({
+  //   transport: Transport.RMQ,
+  //   options: {
+  //     urls: [`amqp://${user}:${password}@${host}`],
+  //     queue: queueName,
+  //     queueOptions: {
+  //       durable: true,
+  //     },
+  //   },
+  // });
  
-  app.startAllMicroservices();
+  // app.startAllMicroservices();
   await app.listen(3000);
 }
 bootstrap();
