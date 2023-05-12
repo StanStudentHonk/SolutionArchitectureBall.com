@@ -6,7 +6,7 @@
     "queue": "ball-com.order-management"
   },
   "mongodb": {
-    "read": "mongodb://mongo-payments:27017/order-management-read",
-    "write": "mongodb://mongo-payments:27017/order-management-write"
+    "read": "mongodb://localhost:27017/order-management-read",
+    "write": "mongodb://localhost:27017/order-management-write"
   }
 }
