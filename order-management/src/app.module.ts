@@ -6,6 +6,8 @@ import { OrderController } from './order.controller';
 import { OrderService } from './order.service';
 import { ConfigService } from '@nestjs/config';
 import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
+import * as config from "../config/config.json";
+
 
 
 @Module({
@@ -17,7 +19,7 @@ import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
           type: 'topic',
         },
       ],
-      uri: 'amqp://rabbit:root@localhost:5672',
+      uri: config.rabbitmq.host,
     }),
     ConfigModule.forRoot()
   ],
