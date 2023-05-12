@@ -1,27 +1,14 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
-import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
-import { InventoryService } from './inventory.service';
-import * as config from "../config/config.json";
+import { ItemModule } from './item/item.module';
+import { WarehouseModule } from './warehouse/warehouse.module';
 
 
 @Module({
   imports: [
-    RabbitMQModule.forRoot(RabbitMQModule, {
-      exchanges: [
-        {
-          name: 'BALLpuntcom',
-          type: 'topic',
-        },
-      ],
-      uri: config.rabbitmq.host,
-    }),
-    ConfigModule.forRoot()
-
+    ConfigModule.forRoot(),
+    ItemModule,
+    WarehouseModule
   ],
-  controllers: [AppController],
-  providers: [AppService, InventoryService],
 })
 export class AppModule {}
