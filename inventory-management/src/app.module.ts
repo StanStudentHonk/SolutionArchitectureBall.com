@@ -4,6 +4,9 @@ import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
 import { InventoryService } from './inventory.service';
+import * as config from "../config/config.json";
+
+
 @Module({
   imports: [
     RabbitMQModule.forRoot(RabbitMQModule, {
@@ -13,7 +16,7 @@ import { InventoryService } from './inventory.service';
           type: 'topic',
         },
       ],
-      uri: 'amqp://rabbit:root@localhost:5672',
+      uri: config.rabbitmq.host,
     }),
     ConfigModule.forRoot()
 
