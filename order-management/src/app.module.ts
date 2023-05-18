@@ -1,14 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { ClientsModule, Transport } from '@nestjs/microservices';
-import { AppService } from './app.service';
 import { OrderController } from './order.controller';
 import { OrderService } from './order.service';
-import { ConfigService } from '@nestjs/config';
 import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
-import * as config from "../config/config.json";
-
-
+import { MongooseModule } from '@nestjs/mongoose';
+import { Order, OrderSchema } from './schemas/order.schema';
+import configuration from 'config/configuration'; '../config/configuration';
 
 @Module({
   imports: [
@@ -19,11 +16,20 @@ import * as config from "../config/config.json";
           type: 'topic',
         },
       ],
-      uri: config.rabbitmq.host,
+      uri: configuration.rabbitmq.host,
     }),
-    ConfigModule.forRoot()
+    MongooseModule.forRoot(configuration.mongodb.read, {
+      connectionName: 'orders-read',
+    }),
+    MongooseModule.forRoot(configuration.mongodb.write, {
+      connectionName: 'orders-write',
+    }),
+    MongooseModule.forFeature([{ name: Order.name, schema: OrderSchema }], 'orders-read'),
+    MongooseModule.forFeature([{ name: Order.name, schema: OrderSchema }], 'orders-write'),
+    ConfigModule.forRoot(
+    )
   ],
   controllers: [OrderController],
-  providers: [AppService, OrderService],
+  providers: [OrderService],
 })
 export class AppModule {}
