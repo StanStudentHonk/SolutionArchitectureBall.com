@@ -12,7 +12,7 @@ services:
       timeout: 10s
       retries: 5
     networks:
-      rabbitmq:
+      rabbitmq: 
 
   inventory-management:
     build:
@@ -27,13 +27,6 @@ services:
       - rabbitmq
     networks:
       rabbitmq:
-      mongo-inventory-management:
-
-  mongo-inventory-management:
-    image: mongo
-    volumes:
-      - /data/inventory-management
-    networks:
       mongo-inventory-management:
 
   order-management:
@@ -51,12 +44,24 @@ services:
       rabbitmq:
       mongo-order-management:
 
-  mongo-order-management:
+  mongo-inventory-management: 
+    image: 
+      mongo
+    volumes:
+      - /data/inventory-management:/data/db
+    ports: 
+      - "27017:27017" 
+    networks: 
+      - mongo-inventory-management 
+
+  mongo-order-management: 
     image: mongo
     volumes:
-      - /data/order-management
-    networks:
-      mongo-order-management:
+      - /data/order-management:/data/db
+    ports: 
+      - "27018:27017"
+    networks: 
+      - mongo-order-management
 
 
 

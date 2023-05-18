@@ -6,7 +6,7 @@
     "queue": "ball-com.inventory-management"
   },
   "mongodb": {
-    "read": "mongodb://mongo-payments:27017/inventory-management-read",
-    "write": "mongodb://mongo-payments:27017/inventory-management-write"
+    "read": "mongodb://mongo-order-management:27017/inventory-management-read",
+    "write": "mongodb://mongo-order-management:27017/inventory-management-write"
   }
 }
