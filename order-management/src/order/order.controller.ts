@@ -14,7 +14,7 @@ export class OrderController {
     const order = await this.orderService.createOrder(orderData);
 
     // Publish the order to the exchange
-    this.amqpConnection.publish<Order>('BALLpuntcom', 'order-created', order);
+    this.amqpConnection.publish<any>('BALLpuntcom', 'order-created', { pattern: 'order-created', data: 'Record' });
     return order;
   }
 
