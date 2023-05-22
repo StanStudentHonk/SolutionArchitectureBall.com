@@ -8,7 +8,7 @@ export type OrderDocument = HydratedDocument<Order>;
 @Schema()
 export class Order {
 
-  @Prop({ required: true })
+  @Prop()
   customer: Customer;
 
   @Prop(

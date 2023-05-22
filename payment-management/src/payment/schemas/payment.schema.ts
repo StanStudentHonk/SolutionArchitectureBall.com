@@ -11,7 +11,7 @@ export class Payment {
     @Prop()
     amount: number;
 
-    @Prop({default: () => new Date(Date.now() + 2 * 24 * 60 * 60 * 1000) })
+    @Prop({default: () => Date.now()})
     paymentDate: Date;
 
     @Prop({ type: Types.ObjectId, ref: 'Order' })

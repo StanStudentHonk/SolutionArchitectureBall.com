@@ -1,6 +1,6 @@
 import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
 import { Body, Controller, Get, Post } from '@nestjs/common';
-import { EventPattern } from '@nestjs/microservices';
+import { PaymentProcessedEvent } from './events/paymentProcessed.event';
 import Payment from './payment.entity';
 import { PaymentService } from './payment.service';
 
@@ -13,7 +13,7 @@ export class PaymentController {
     const payment = await this.paymentService.createPayment(paymentData);
 
     // Publish the event to the exchange
-    this.amqpConnection.publish<Payment>('BALLpuntcom', 'payment-processed', payment);
+    this.amqpConnection.publish<PaymentProcessedEvent>('BALLpuntcom', 'payment-processed', {pattern: 'payment-processed', payload: payment});
     return payment;
   }
 

@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
-import { MongooseModule } from '@nestjs/mongoose';
 import configuration from 'config/configuration';
 import { PaymentController } from './payment.controller';
 import Payment from './payment.entity';
 import { PaymentService } from './payment.service';
 import { PaymentSchema } from './schemas/payment.schema';
+import { MongooseModule } from '@nestjs/mongoose';
 import { Order, OrderSchema } from './schemas/order.schema';
 import { Customer, CustomerSchema } from './schemas/customer.schema';
+import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
+import { EventEmitterModule } from '@nestjs/event-emitter';
  '../config/configuration';
 
 @Module({
@@ -34,8 +34,7 @@ import { Customer, CustomerSchema } from './schemas/customer.schema';
     MongooseModule.forFeature([{ name: Order.name, schema: OrderSchema }], 'payments-write'),
     MongooseModule.forFeature([{ name: Customer.name, schema: CustomerSchema }], 'payments-read'),
     MongooseModule.forFeature([{ name: Customer.name, schema: CustomerSchema }], 'payments-write'),
-    ConfigModule.forRoot(
-    )
+    EventEmitterModule.forRoot()
   ],
   controllers: [PaymentController],
   providers: [PaymentService],
