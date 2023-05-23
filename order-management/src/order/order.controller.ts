@@ -1,6 +1,6 @@
 import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
 import { Body, Controller, Get, Post } from '@nestjs/common';
-import { EventPattern } from '@nestjs/microservices';
+import { orderCreatedEvent } from './events/orderCreated.event';
 import { OrderService } from './order.service';
 import { Order } from './schemas/order.schema';
 
@@ -12,9 +12,9 @@ export class OrderController {
   async createOrder(@Body() orderData: Order) {
     // Add to the mongoDB
     const order = await this.orderService.createOrder(orderData);
-
     // Publish the order to the exchange
-    this.amqpConnection.publish<any>('BALLpuntcom', 'order-created', { pattern: 'order-created', data: 'Record' });
+    this.amqpConnection.publish<orderCreatedEvent>('BALLpuntcom', 'order-created', {pattern: 'order-created', payload: order});
+
     return order;
   }
 

@@ -1,71 +1,93 @@
 version: "3.3"
 services:
-  rabbitmq:
-    image: rabbitmq:management
-    hostname: rabbitmq
-    ports:
-      - 5672:5672
-      - 15672:15672
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:15672"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-    networks:
-      rabbitmq: 
+    rabbitmq:
+        image: rabbitmq:management
+        hostname: rabbitmq
+        ports:
+            - 5672:5672
+            - 15672:15672
+        healthcheck:
+            test: ["CMD", "curl", "-f", "http://localhost:15672"]
+            interval: 30s
+            timeout: 10s
+            retries: 5
+        networks:
+            rabbitmq:
 
-  inventory-management:
-    build:
-      context: ./inventory-management
-      dockerfile: Dockerfile
-    restart: on-failure
-    ports:
-      - 3001:3000
-    depends_on:
-      - rabbitmq
-    links:
-      - rabbitmq
-    networks:
-      rabbitmq:
-      mongo-inventory-management:
+    inventory-management:
+        build:
+            context: ./inventory-management
+            dockerfile: Dockerfile
+        restart: on-failure
+        ports:
+            - 3001:3000
+        depends_on:
+            - rabbitmq
+        links:
+            - rabbitmq
+        networks:
+            rabbitmq:
+            mongo-inventory-management:
 
-  order-management:
-    build:
-      context: ./order-management
-      dockerfile: Dockerfile
-    restart: on-failure
-    ports:
-      - 3002:3000
-    depends_on:
-      - rabbitmq
-    links:
-      - rabbitmq
-    networks:
-      rabbitmq:
-      mongo-order-management:
+    mongo-inventory-management:
+        image: mongo
+        volumes:
+            - /data/inventory-management:/data/db
+        ports:
+            - "27017:27017"
+        networks:
+            - mongo-inventory-management
 
-  mongo-inventory-management: 
-    image: 
-      mongo
-    volumes:
-      - /data/inventory-management:/data/db
-    ports: 
-      - "27017:27017" 
-    networks: 
-      - mongo-inventory-management 
+    order-management:
+        build:
+            context: ./order-management
+            dockerfile: Dockerfile
+        restart: on-failure
+        ports:
+            - 3002:3000
+        depends_on:
+            - rabbitmq
+        links:
+            - rabbitmq
+        networks:
+            rabbitmq:
+            mongo-order-management:
 
-  mongo-order-management: 
-    image: mongo
-    volumes:
-      - /data/order-management:/data/db
-    ports: 
-      - "27018:27017"
-    networks: 
-      - mongo-order-management
+    mongo-order-management:
+        image: mongo
+        volumes:
+            - /data/order-management:/data/db
+        ports:
+            - "27018:27017"
+        networks:
+            - mongo-order-management
 
+    payment-management:
+        build:
+            context: ./payment-management
+            dockerfile: Dockerfile
+        restart: on-failure
+        ports:
+            - 3003:3000
+        depends_on:
+            - rabbitmq
+        links:
+            - rabbitmq
+        networks:
+            rabbitmq:
+            mongo-payment-management:
 
+    mongo-payment-management:
+        image: mongo
+        volumes:
+            - /data/payment-management:/data/db
+        ports:
+            - "27019:27017"
+        networks:
+            - mongo-payment-management
 
 networks:
-  rabbitmq:
-  mongo-inventory-management:
-  mongo-order-management:
+    rabbitmq:
+    mongo-inventory-management:
+    mongo-order-management:
+    mongo-payment-management:
