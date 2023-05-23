@@ -1,12 +1,12 @@
 import { RabbitSubscribe } from '@golevelup/nestjs-rabbitmq';
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { RabbitMQEvent } from './events/rabbitMQEvent.event';
-import Payment from './payment.entity';
 import { Order } from './schemas/order.schema';
 import { Customer } from './schemas/customer.schema';
+import { Payment } from './schemas/payment.schema';
 
 @Injectable()
 export class PaymentService {
@@ -27,17 +27,38 @@ export class PaymentService {
   ) {}
 
   async createPayment(payment: Payment): Promise<Payment> {
+    // Check if the order exists
+    const order = await this.orderReadModel
+      .findById(payment.orderId);
+    if (!order) {
+      throw new NotFoundException('Order does not exist');
+    }
+
+    // Check if the customer exists
+    const customer = await this.customerReadModel
+      .findById(payment.customerId);
+    if (!customer) {
+      throw new NotFoundException('Customer does not exist');
+    }
+
     const newPayment = new this.paymentWriteModel(payment);
-    return newPayment.save();
+
+    const savedPayment = await newPayment.save();
+    this.eventEmitter.emit('payment-processed', savedPayment);
+    return savedPayment;
   }
 
   async getPayments(): Promise<Payment[]> {
     return this.paymentReadModel.find().exec();
   }
 
+  async getPaymentsByOrderId(orderId: string): Promise<Payment[]> {
+    return this.paymentReadModel.find({ orderId: orderId }).exec();
+  }
+
   @RabbitSubscribe({
     exchange: 'BALLpuntcom',
-    routingKey: ['payment-processed', 'order-created'],
+    routingKey: ['order-created'],
     queue: 'payment',
   })
   public async onEventFromPaymentQueue(event: RabbitMQEvent) {
@@ -88,8 +109,7 @@ export class PaymentService {
   }
 
   @OnEvent('payment-processed')
-  async handlePaymentProcessedEvent(payload: Payment) {
-    const newPayment = new this.paymentReadModel(payload);
-    await newPayment.save();
+  async handlePaymentProcessedEvent(payment: Payment) {
+    await this.paymentReadModel.collection.insertOne(payment);
   }
 }

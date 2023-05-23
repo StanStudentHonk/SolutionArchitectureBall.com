@@ -1,8 +1,8 @@
 import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { PaymentProcessedEvent } from './events/paymentProcessed.event';
-import Payment from './payment.entity';
 import { PaymentService } from './payment.service';
+import { Payment } from './schemas/payment.schema';
 
 @Controller('payments')
 export class PaymentController {
@@ -18,8 +18,8 @@ export class PaymentController {
     // Publish the event to the exchange
     this.amqpConnection.publish<PaymentProcessedEvent>(
       'BALLpuntcom',
-      'payment-processed',
-      { pattern: 'payment-processed', payload: payment },
+      'payment-made',
+      { pattern: 'payment-made', payload: payment },
     );
     return payment;
   }

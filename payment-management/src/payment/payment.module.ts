@@ -1,9 +1,8 @@
 import { Module } from '@nestjs/common';
 import configuration from 'config/configuration';
 import { PaymentController } from './payment.controller';
-import Payment from './payment.entity';
 import { PaymentService } from './payment.service';
-import { PaymentSchema } from './schemas/payment.schema';
+import { Payment, PaymentSchema } from './schemas/payment.schema';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Order, OrderSchema } from './schemas/order.schema';
 import { Customer, CustomerSchema } from './schemas/customer.schema';
