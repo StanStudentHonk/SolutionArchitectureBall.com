@@ -8,7 +8,11 @@ export type OrderDocument = HydratedDocument<Order>;
 @Schema()
 export class Order {
 
+<<<<<<< HEAD
   @Prop()
+=======
+  @Prop({ required: true })
+>>>>>>> master
   customer: Customer;
 
   @Prop(
