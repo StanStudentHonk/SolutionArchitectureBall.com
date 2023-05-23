@@ -6,6 +6,7 @@ import { Model } from 'mongoose';
 import { RabbitMQEvent } from './events/rabbitMQEvent.event';
 import Payment from './payment.entity';
 import { Order } from './schemas/order.schema';
+import { Customer } from './schemas/customer.schema';
 
 @Injectable()
 export class PaymentService {
@@ -19,6 +20,10 @@ export class PaymentService {
     private readonly orderReadModel: Model<Order>,
     @InjectModel(Order.name, 'payments-write')
     private readonly orderWriteModel: Model<Order>,
+    @InjectModel(Customer.name, 'payments-read')
+    private readonly customerReadModel: Model<Customer>,
+    @InjectModel(Customer.name, 'payments-write')
+    private readonly customerWriteModel: Model<Customer>,
   ) {}
 
   async createPayment(payment: Payment): Promise<Payment> {
@@ -36,19 +41,25 @@ export class PaymentService {
     queue: 'payment',
   })
   public async onEventFromPaymentQueue(event: RabbitMQEvent) {
-    console.log(event + event.pattern)
-    this.eventEmitter.emit(
-      event.pattern,
-      event.payload
-    );
-
+    this.eventEmitter.emit(event.pattern, event.payload);
   }
 
   @OnEvent('order-created')
-  handleOrderCreatedEvent(payload) {
-    console.log('Order created');
-    console.log(payload);
-    // First, calculate the total price of the order
+  async handleOrderCreatedEvent(payload) {
+    // Get customer, if it exists otherwise create it
+    let customer = await this.customerWriteModel
+      .findOne({ email: payload['customer']['email'] });
+    if (!customer) {
+      const newCustomer = new this.customerWriteModel({
+        email: payload['customer']['email'],
+        name: payload['customer']['name'],
+      });
+      customer = await newCustomer.save();
+      // Save the customer to the read model
+      this.eventEmitter.emit('customer-created', customer);
+    }
+
+    // Then, calculate the total price of the order
     let totalPrice = 0;
     for (const item of payload['items']) {
       totalPrice += item['price'];
@@ -60,19 +71,25 @@ export class PaymentService {
     });
 
     // Save the order to the write model
-    newOrder.save().then(() => {
-      // Then, save the order to the read model
-      const newOrder = new this.orderReadModel({
-        totalPrice: totalPrice,
-        orderDate: payload['orderDate'],
-      });
-      newOrder.save();
-    });
+    const savedOrder = await newOrder.save();
+
+    // Emit order processed event to save the order to the read model
+    this.eventEmitter.emit('order-processed', savedOrder);
+  }
+
+  @OnEvent('customer-created')
+  async handleCustomerCreatedEvent(customer: Customer) {
+    await this.customerReadModel.collection.insertOne(customer);
+  }
+
+  @OnEvent('order-processed')
+  async handleOrderProcessedEvent(order: Order) {
+    await this.orderReadModel.collection.insertOne(order);
   }
 
   @OnEvent('payment-processed')
-  handlePaymentProcessedEvent(payload: Payment) {
+  async handlePaymentProcessedEvent(payload: Payment) {
     const newPayment = new this.paymentReadModel(payload);
-    newPayment.save();
+    await newPayment.save();
   }
 }

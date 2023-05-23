@@ -8,7 +8,8 @@ export class Customer {
 
   @Prop()
   name: string;
-  @Prop()
+
+  @Prop({ unique: true })
   email: string;
 }
 

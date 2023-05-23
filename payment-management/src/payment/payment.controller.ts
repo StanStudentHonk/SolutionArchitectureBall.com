@@ -6,14 +6,21 @@ import { PaymentService } from './payment.service';
 
 @Controller('payments')
 export class PaymentController {
-  constructor(private readonly amqpConnection: AmqpConnection, private readonly paymentService: PaymentService) {}
+  constructor(
+    private readonly amqpConnection: AmqpConnection,
+    private readonly paymentService: PaymentService,
+  ) {}
   @Post()
   async processPayment(@Body() paymentData: Payment) {
     // Add payment to the mongoDB
     const payment = await this.paymentService.createPayment(paymentData);
 
     // Publish the event to the exchange
-    this.amqpConnection.publish<PaymentProcessedEvent>('BALLpuntcom', 'payment-processed', {pattern: 'payment-processed', payload: payment});
+    this.amqpConnection.publish<PaymentProcessedEvent>(
+      'BALLpuntcom',
+      'payment-processed',
+      { pattern: 'payment-processed', payload: payment },
+    );
     return payment;
   }
 
@@ -25,5 +32,4 @@ export class PaymentController {
     // Return the payments
     return payments;
   }
-
 }
