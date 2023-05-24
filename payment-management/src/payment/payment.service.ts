@@ -83,10 +83,11 @@ export class PaymentService {
     // Then, calculate the total price of the order
     let totalPrice = 0;
     for (const item of payload['items']) {
-      totalPrice += item['price'];
+      totalPrice += item['price'] * item['amount'];
     }
     // Then, create the order
     const newOrder = new this.orderWriteModel({
+      _id: payload['_id'],
       totalPrice: totalPrice,
       orderDate: payload['orderDate'],
     });
