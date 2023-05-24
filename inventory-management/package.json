@@ -8,6 +8,7 @@
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "start-dev": "cross-env NODE_ENV=development nest start",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
@@ -21,17 +22,25 @@
   },
   "dependencies": {
     "@golevelup/nestjs-rabbitmq": "^3.6.0",
-    "@nestjs/common": "^9.0.0",
+    "@nestjs/common": "^9.4.0",
     "@nestjs/config": "^2.3.1",
     "@nestjs/core": "^9.0.0",
-    "@nestjs/cqrs": "^9.0.4",
     "@nestjs/event-emitter": "^1.4.1",
+    "@nestjs/mapped-types": "^1.2.2",
     "@nestjs/microservices": "^9.4.0",
+    "@nestjs/mongoose": "^9.2.2",
     "@nestjs/platform-express": "^9.0.0",
+    "@nestjs/typeorm": "^9.0.1",
+    "@nestjs/cqrs": "^9.0.4",
     "amqp-connection-manager": "^4.1.13",
     "amqplib": "^0.10.3",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.0",
+    "mongoose": "^7.1.1",
     "reflect-metadata": "^0.1.13",
-    "rxjs": "^7.2.0"
+    "rxjs": "^7.8.1",
+    "typeorm": "^0.3.15",
+    "cross-env": "^7.0.3"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",

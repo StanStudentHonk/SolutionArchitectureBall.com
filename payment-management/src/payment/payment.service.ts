@@ -36,7 +36,6 @@ export class PaymentService {
     queue: 'payment',
   })
   public async onEventFromPaymentQueue(event: RabbitMQEvent) {
-    console.log(event + event.pattern)
     this.eventEmitter.emit(
       event.pattern,
       event.payload

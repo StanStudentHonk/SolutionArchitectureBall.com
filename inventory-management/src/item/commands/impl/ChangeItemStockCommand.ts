@@ -1,8 +1,10 @@
-export class ChangeItemStockCommand {
+import { itemOrderedDTO } from "src/item/dto's/itemOrdered.dto";
+import { orderCreatedDTO } from "src/item/dto's/orderCreated.dto";
+import { Item } from "src/item/schemas/item.schema";
+import { Order } from "src/item/schemas/order.interface";
+
+export class ChangeItemStockByOrderCommand {
     constructor(
-      public readonly itemId: string,
-      public readonly supplierId: string,
-      public readonly amount: string,
-      public readonly warehouseId: string,
+      public readonly order: orderCreatedDTO,
     ) {}
   }
