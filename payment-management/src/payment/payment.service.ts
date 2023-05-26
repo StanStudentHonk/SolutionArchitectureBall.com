@@ -1,5 +1,9 @@
 import { RabbitSubscribe } from '@golevelup/nestjs-rabbitmq';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -7,11 +11,14 @@ import { RabbitMQEvent } from './events/rabbitMQEvent.event';
 import { Order } from './schemas/order.schema';
 import { Customer } from './schemas/customer.schema';
 import { Payment } from './schemas/payment.schema';
+import { CurrencyService } from 'src/currency/currency.service';
+import { Currency } from 'src/currency/currency.enum';
 
 @Injectable()
 export class PaymentService {
   constructor(
     private eventEmitter: EventEmitter2,
+    private readonly currencyService: CurrencyService,
     @InjectModel(Payment.name, 'payments-read')
     private readonly paymentReadModel: Model<Payment>,
     @InjectModel(Payment.name, 'payments-write')
@@ -26,26 +33,37 @@ export class PaymentService {
     private readonly customerWriteModel: Model<Customer>,
   ) {}
 
-  async createPayment(payment: Payment): Promise<Payment> {
+  async createPayment(payment: any): Promise<Payment> {
     // Check if the order exists
-    const order = await this.orderReadModel
-      .findById(payment.orderId);
+    const order = await this.orderReadModel.findById(payment.orderId);
     if (!order) {
       throw new NotFoundException('Order does not exist');
     }
 
-    // Check if the customer exists
-    const customer = await this.customerReadModel
-      .findById(payment.customerId);
-    if (!customer) {
-      throw new NotFoundException('Customer does not exist');
+    // Check if currency is supported
+    if (!Object.values(Currency).includes(payment.currency)) {
+      throw new BadRequestException(
+        `Currency ${payment.currency} is not supported`,
+      );
     }
 
-    const newPayment = new this.paymentWriteModel(payment);
-
-    const savedPayment = await newPayment.save();
-    this.eventEmitter.emit('payment-processed', savedPayment);
-    return savedPayment;
+    // Check if currency is EUR
+    if (payment.currency !== Currency.EUR) {
+      // Convert to EUR
+      const exchangeRate = await this.currencyService.getCurrencyConversion(
+        payment.currency,
+        Currency.EUR,
+      );
+      payment.amount = payment.amount * exchangeRate;
+    }
+    try {
+      const newPayment = new this.paymentWriteModel(payment);
+      const savedPayment = await newPayment.save();
+      this.eventEmitter.emit('payment-processed', savedPayment);
+      return savedPayment;
+    } catch (error) {
+      throw new BadRequestException("Couldn't process payment");
+    }
   }
 
   async getPayments(): Promise<Payment[]> {
@@ -68,8 +86,9 @@ export class PaymentService {
   @OnEvent('order-created')
   async handleOrderCreatedEvent(payload) {
     // Get customer, if it exists otherwise create it
-    let customer = await this.customerWriteModel
-      .findOne({ email: payload['customer']['email'] });
+    let customer = await this.customerWriteModel.findOne({
+      email: payload['customer']['email'],
+    });
     if (!customer) {
       const newCustomer = new this.customerWriteModel({
         email: payload['customer']['email'],
@@ -90,6 +109,7 @@ export class PaymentService {
       _id: payload['_id'],
       totalPrice: totalPrice,
       orderDate: payload['orderDate'],
+      customerId: customer['_id'],
     });
 
     // Save the order to the write model

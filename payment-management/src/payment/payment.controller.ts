@@ -11,7 +11,7 @@ export class PaymentController {
     private readonly paymentService: PaymentService,
   ) {}
   @Post()
-  async processPayment(@Body() paymentData: Payment) {
+  async processPayment(@Body() paymentData: any) {
     // Add payment to the mongoDB
     const payment = await this.paymentService.createPayment(paymentData);
 
