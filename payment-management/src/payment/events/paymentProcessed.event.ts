@@ -1,4 +1,4 @@
-import Payment from "../payment.entity";
+import { Payment } from "../schemas/payment.schema";
 import { RabbitMQEvent } from "./rabbitMQEvent.event";
 
 export class PaymentProcessedEvent extends RabbitMQEvent{

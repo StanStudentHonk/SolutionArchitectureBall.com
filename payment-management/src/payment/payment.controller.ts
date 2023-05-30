@@ -1,19 +1,26 @@
 import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { PaymentProcessedEvent } from './events/paymentProcessed.event';
-import Payment from './payment.entity';
 import { PaymentService } from './payment.service';
+import { Payment } from './schemas/payment.schema';
 
 @Controller('payments')
 export class PaymentController {
-  constructor(private readonly amqpConnection: AmqpConnection, private readonly paymentService: PaymentService) {}
+  constructor(
+    private readonly amqpConnection: AmqpConnection,
+    private readonly paymentService: PaymentService,
+  ) {}
   @Post()
-  async processPayment(@Body() paymentData: Payment) {
+  async processPayment(@Body() paymentData: any) {
     // Add payment to the mongoDB
     const payment = await this.paymentService.createPayment(paymentData);
 
     // Publish the event to the exchange
-    this.amqpConnection.publish<PaymentProcessedEvent>('BALLpuntcom', 'payment-processed', {pattern: 'payment-processed', payload: payment});
+    this.amqpConnection.publish<PaymentProcessedEvent>(
+      'BALLpuntcom',
+      'payment-made',
+      { pattern: 'payment-made', payload: payment },
+    );
     return payment;
   }
 
@@ -25,5 +32,4 @@ export class PaymentController {
     // Return the payments
     return payments;
   }
-
 }

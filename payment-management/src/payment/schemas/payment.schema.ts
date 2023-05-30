@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
+import { Currency } from 'src/currency/currency.enum';
 
 export type PaymentDocument = HydratedDocument<Payment>;
 
@@ -16,9 +17,6 @@ export class Payment {
 
     @Prop({ type: Types.ObjectId, ref: 'Order' })
     orderId: Types.ObjectId;
-
-    @Prop({ type: Types.ObjectId, ref: 'Customer' })
-    customerId: Types.ObjectId;
 
 }
 

@@ -1,19 +1,19 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
-import { CreateItemDto } from './dtos/createItem.dto';
-import { Item } from './item.interface';
 import { ItemService } from './item.service';
+import { Item } from './schemas/item.schema';
 
 @Controller("items")
 export class ItemController {
   constructor(private itemService: ItemService) {}
   
   @Post()
-  async addItemToInventory(@Body() itemDto: CreateItemDto) {
-    this.itemService.create(itemDto);
+  async addItemToInventory(@Body() item: Item) {
+    
+    return this.itemService.addItemToInventory(item) 
   }
 
   @Get()
   async getAllItems(): Promise<Item[]> {
-    return this.itemService.findAll();
+    return
   }
 }

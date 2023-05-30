@@ -1,5 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, ObjectId, SchemaTypes } from 'mongoose';
+import { WareHouseStock, WareHouseStockSchema } from './warehouseStock.schema';
+import { Supplier } from './supplier.schema';
 
 export type ItemDocument = HydratedDocument<Item>;
 
@@ -13,10 +15,18 @@ export class Item {
   itemCode: string;
 
   @Prop()
-  size: ItemSize;
+  supplier: Supplier
+
+  @Prop(
+    {
+      type: [WareHouseStockSchema],
+      required: true,
+    }
+  )
+  wareHouseStock: WareHouseStock[];
 
   @Prop()
-  amount: number;
+  size: ItemSize;
 
   @Prop()
   price: number;
