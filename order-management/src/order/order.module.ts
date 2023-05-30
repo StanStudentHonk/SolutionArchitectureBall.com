@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { OrderController } from './order.controller';
 import { OrderService } from './order.service';
 import { MongooseModule } from '@nestjs/mongoose';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
 import configuration from 'config/configuration';
 import { Order, OrderSchema } from './schemas/order.schema';
@@ -31,6 +32,7 @@ import { Order, OrderSchema } from './schemas/order.schema';
       [{ name: Order.name, schema: OrderSchema }],
       'orders-write',
     ),
+    EventEmitterModule.forRoot(),
   ],
   controllers: [OrderController],
   providers: [OrderService],

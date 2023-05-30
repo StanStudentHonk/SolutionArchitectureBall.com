@@ -16,6 +16,9 @@ export class Item {
   size: ItemSize;
 
   @Prop()
+  amount: number;
+
+  @Prop()
   price: number;
 }
 
