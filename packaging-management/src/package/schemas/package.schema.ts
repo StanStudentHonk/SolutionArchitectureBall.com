@@ -1,14 +1,24 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, ObjectId, SchemaTypes } from 'mongoose';
-import { TransportCompany } from './transportCompany.schema';
-
-export type ItemDocument = HydratedDocument<Package>;
+import { Item, ItemSchema } from './item.schema';
 
 @Schema()
 export class Package {
   //Adress
   @Prop({ required: true })
   Adress: string;
+
+  @Prop(
+    {
+      type: [ItemSchema],
+      required: true,
+    }
+  )
+  items: Map<Item, number>;
+  
+  //Warehouse
+  @Prop({ required: true })
+  Warehouse: string;
 
   //WeightInKg
   @Prop({ required: true })
@@ -17,14 +27,7 @@ export class Package {
   //Size enum
   @Prop({ required: true })
   Size: Size;
-
-  //EstimatedDeliveryDate
-  @Prop({ required: true })
-  EstimatedDeliveryDate: Date;
-
-  //TransportCompany
-  @Prop()
-  TransportCompany: TransportCompany;
 }
 
-export const ItemSchema = SchemaFactory.createForClass(Package);
+export type PackageDocument = Package & Document;
+export const PackageSchema = SchemaFactory.createForClass(Package);
