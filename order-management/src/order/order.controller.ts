@@ -1,8 +1,8 @@
-import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
-import { Body, Controller, Get, Post } from '@nestjs/common';
-import { orderCreatedEvent } from './events/orderCreated.event';
-import { OrderService } from './order.service';
-import { Order } from './schemas/order.schema';
+import { AmqpConnection } from "@golevelup/nestjs-rabbitmq";
+import { Controller, Post, Body, Get } from "@nestjs/common";
+import { orderCreatedEvent } from "./events/orderCreated.event";
+import { OrderService } from "./order.service";
+import { Order } from "./schemas/order.schema";
 
 @Controller('orders')
 export class OrderController {

@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, Types } from 'mongoose';
 
 export type OrderDocument = HydratedDocument<Order>;
 
@@ -10,6 +10,9 @@ export class Order {
 
   @Prop()
   orderDate: Date;
+
+  @Prop({ type: Types.ObjectId, ref: 'Order' })
+  customerId: Types.ObjectId;
 }
 
 export const OrderSchema = SchemaFactory.createForClass(Order);
