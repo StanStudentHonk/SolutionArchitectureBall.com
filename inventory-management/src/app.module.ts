@@ -1,14 +1,12 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { ItemModule } from './item/item.module';
-import { WarehouseModule } from './warehouse/warehouse.module';
+import { InventoryModule } from './inventory/inventory.module';
 
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    ItemModule,
-    WarehouseModule
+    InventoryModule,
   ],
 })
 export class AppModule {}
