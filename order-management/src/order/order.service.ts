@@ -4,6 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Order } from './schemas/order.schema';
 import { OnEvent } from '@nestjs/event-emitter';
+import { RabbitMQEvent } from './events/rabbitMQEvent.event';
 
 @Injectable()
 export class OrderService {
@@ -29,8 +30,9 @@ export class OrderService {
     queue: 'order',
   })
   @OnEvent('order-created')
-  public async pubSubHandler(msg: {}) {
-    const newOrder = new this.orderReadModel(msg);
+  public async pubSubHandler(event: RabbitMQEvent) {
+    let payload = event['payload']
+    const newOrder = new this.orderReadModel(payload);
     newOrder.save();
   }
 }
