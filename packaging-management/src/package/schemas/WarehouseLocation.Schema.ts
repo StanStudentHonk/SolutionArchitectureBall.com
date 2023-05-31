@@ -7,7 +7,7 @@ export type WarehouseLocationDocument = HydratedDocument<WarehouseLocation>;
 export class WarehouseLocation {
 
   @Prop()
-  warehouse: string;
+  wareHouse: string;
 
   @Prop()
   palletRack: string;

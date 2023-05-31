@@ -18,11 +18,11 @@ let devConfig = {
     rabbitmq : {
         host: "amqp://localhost:5672",
         exchange: "ball-com",
-        queue: "ball-com.order-management"
+        queue: "ball-com.transport-management"
     },
     mongodb: {
-      read: "mongodb://localhost:27018/order-management-read",
-      write: "mongodb://localhost:27018/order-management-write"
+      read: "mongodb://localhost:27018/transport-management-read",
+      write: "mongodb://localhost:27018/transport-management-write"
     }
 }
 let prodConfig = {
@@ -30,11 +30,11 @@ let prodConfig = {
     rabbitmq : {
         host: "amqp://rabbitmq",
         exchange: "ball-com",
-        queue: "ball-com.order-management"
+        queue: "ball-com.transport-management"
     },
     mongodb: {
-      read: "mongodb://mongo-order-management:27017/order-management-read",
-      write: "mongodb://mongo-order-management:27017/order-management-write"
+      read: "mongodb://mongo-transport-management:27017/transport-management-read",
+      write: "mongodb://mongo-transport-management:27017/transport-management-write"
     }
 }
 if (env === 'development') {

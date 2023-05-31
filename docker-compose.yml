@@ -86,8 +86,59 @@ services:
         networks:
             - mongo-payment-management
 
+    packaging-management:
+        build:
+            context: ./packaging-management
+            dockerfile: Dockerfile
+        restart: on-failure
+        ports:
+            - 3004:3000
+        depends_on:
+            - rabbitmq
+        links:
+            - rabbitmq
+        networks:
+            rabbitmq:
+            mongo-packaging-management:
+
+    mongo-packaging-management:
+        image: mongo
+        volumes:
+            - /data/packaging-management:/data/db
+        ports:
+            - "27020:27017"
+        networks:
+            - mongo-packaging-management
+
+
+    transport-management:
+        build:
+            context: ./transport-management
+            dockerfile: Dockerfile
+        restart: on-failure
+        ports:
+            - 3005:3000
+        depends_on:
+            - rabbitmq
+        links:
+            - rabbitmq
+        networks:
+            rabbitmq:
+            mongo-transport-management:
+
+    mongo-transport-management:
+        image: mongo
+        volumes:
+            - /data/transport-management:/data/db
+        ports:
+            - "27021:27017"
+        networks:
+            - mongo-transport-management
+
 networks:
     rabbitmq:
     mongo-inventory-management:
     mongo-order-management:
     mongo-payment-management:
+    mongo-packaging-management:
+    mongo-transport-management:

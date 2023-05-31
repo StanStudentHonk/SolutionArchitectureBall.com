@@ -41,6 +41,8 @@ export class TransportCompanyService {
     queue: 'transport',
   })
   public async packageCreatedHandler(msg: string) {
+    console.log('IN THE PACKAGE CREATED HANDLER');
+    console.log('Package created:', msg);
     try {
       const givenPackage: Package = JSON.parse(msg);
       // Retrieve transport companies from the database  
