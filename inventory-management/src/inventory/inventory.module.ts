@@ -12,6 +12,8 @@ import { InventoryRepository } from './repository/inventory.repository';
 import { AssortmentItem, AssortmentItemSchema } from './schemas/read-schemas/assortment-item.schema';
 import { Item, ItemSchema } from './schemas/write-schemas/item.schema';
 import { InventoryService } from './services/inventory.service';
+import { InventoryEventRepository } from './repository/inventory-event.repository';
+import { ItemStockChanged, ItemStockChangedSchema } from './schemas/eventstore-schemas/item-stock-changed.schema';
 
 
 @Module({
@@ -28,12 +30,19 @@ import { InventoryService } from './services/inventory.service';
         MongooseModule.forRoot(configuration.mongodb.read, {
         connectionName: 'assortmentItems-read',
         }),
+        MongooseModule.forRoot(configuration.mongodb.eventStore, {
+          connectionName: 'itemStockChangeds-read',
+        }),
         MongooseModule.forRoot(configuration.mongodb.write, {
         connectionName: 'items-write',
         }),
         MongooseModule.forFeature(
         [{ name: AssortmentItem.name, schema: AssortmentItemSchema }],
         'assortmentItems-read',
+        ),
+        MongooseModule.forFeature(
+          [{ name: ItemStockChanged.name, schema: ItemStockChangedSchema }],
+          'itemStockChangeds-read',
         ),
         MongooseModule.forFeature(
         [{ name: Item.name, schema: ItemSchema }],
@@ -46,6 +55,7 @@ import { InventoryService } from './services/inventory.service';
     providers: [
         InventoryService, 
         InventoryRepository,
+        InventoryEventRepository,
         ...CommandHandlers,
         ...EventHandlers,
         ...QueryHandlers,

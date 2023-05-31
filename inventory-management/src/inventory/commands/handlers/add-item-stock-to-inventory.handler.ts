@@ -15,7 +15,6 @@ export class AddItemStockToInventoryHandler implements ICommandHandler<AddItemSt
   async execute(command: AddItemStockToInventoryCommand) {
     let item = await this.repository.addItemStock(command.itemId, command.warehouseStockId ,command.amountToAdd)
     if(item){
-        console.log(item)
         let wareHouseStockChangedEvent = new WareHouseStockChangedEvent(item.warehouseStock.wareHouseLocation, command.amountToAdd * -1)
         this.eventBus.publish(new ItemStockChangedEvent([wareHouseStockChangedEvent], item.item))
     }
