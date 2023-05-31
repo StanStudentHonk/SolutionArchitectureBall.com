@@ -3,15 +3,16 @@ import { Body, Controller, Get, Post } from '@nestjs/common';
 import { EventPattern } from '@nestjs/microservices';
 import { Package } from './schemas/package.schema';
 import { PackageService } from './package.service';
+import { Order } from './schemas/order.schema';
 
 @Controller('package')
 export class PackageController {
   constructor(private readonly amqpConnection: AmqpConnection, private readonly packageService: PackageService) {}
   
   @Post()
-  async createPackage(@Body() PackageData: Package) {
+  async createPackage(@Body() PackageData: Package, OrderData: Order) {
     // Add to the mongoDB
-    const createdPackage = await this.packageService.createPackage(PackageData);
+    const createdPackage = await this.packageService.createPackage(PackageData, OrderData);
     // Publish the Package to the exchange
     this.amqpConnection.publish<Package>('BALLpuntcom', 'package-created', createdPackage);
     return createdPackage;

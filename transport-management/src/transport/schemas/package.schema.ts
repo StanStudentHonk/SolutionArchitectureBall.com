@@ -2,13 +2,13 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, ObjectId, SchemaTypes } from 'mongoose';
 import { TransportCompany } from './transportCompany.schema';
 
-export type ItemDocument = HydratedDocument<Package>;
+export type PackageDocument = HydratedDocument<Package>;
 
 @Schema()
 export class Package {
   //Adress
   @Prop({ required: true })
-  Adress: string;
+  Address: string;
 
   //WeightInKg
   @Prop({ required: true })
@@ -25,6 +25,9 @@ export class Package {
   //TransportCompany
   @Prop()
   TransportCompany: TransportCompany;
+
+  @Prop({ required: true })
+  TransportPrice: number;
 }
 
-export const ItemSchema = SchemaFactory.createForClass(Package);
+export const PackageSchema = SchemaFactory.createForClass(Package);

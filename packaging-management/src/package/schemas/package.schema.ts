@@ -6,7 +6,7 @@ import { Item, ItemSchema } from './item.schema';
 export class Package {
   //Adress
   @Prop({ required: true })
-  Adress: string;
+  Address: string;
 
   @Prop(
     {

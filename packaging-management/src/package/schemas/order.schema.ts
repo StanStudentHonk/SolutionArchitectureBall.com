@@ -18,7 +18,7 @@ export class Order {
   orderDate: Date;
 
   @Prop()
-  deliveryAdress: string;
+  deliveryAddress: string;
   
   @Prop({default: () => new Date(Date.now() + 2 * 24 * 60 * 60 * 1000) })
   deliveryDate: Date;
