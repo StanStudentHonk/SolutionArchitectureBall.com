@@ -5,6 +5,8 @@ import { Model } from 'mongoose';
 import { TransportCompany } from './schemas/transportCompany.schema';
 import { Console } from 'console';
 import { Package } from './schemas/package.schema';
+import { RabbitMQEvent } from './schemas/rabbitMQEvent.event';
+import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 
 @Injectable()
 export class TransportCompanyService {
@@ -22,24 +24,21 @@ export class TransportCompanyService {
     @InjectModel(Package.name, 'transports-read')
     private readonly packageReadModel: Model<Package>,
 
+    private eventEmitter: EventEmitter2,
+
     private readonly amqpConnection: AmqpConnection,
   ) {}
 
-  /*@RabbitSubscribe({
+  @RabbitSubscribe({
     exchange: 'BALLpuntcom',
     routingKey: ['transportPackage-created','package-created'],
-    queue: 'inventory',
+    queue: 'transport',
   })
   public async changeItemStockBasedOnOrder(event: RabbitMQEvent) {
     this.eventEmitter.emit(
       event['pattern'],
       event['payload']
     );
-  }*/
-
-  @OnEvent('order-created')
-  handlePaymentProcessedEvent(payload: any) { 
-      this.commandBus.execute(new ChangeInventoryByOrderCommand(payload));
   }
 
   async createTransportCompany(transport: TransportCompany): Promise<TransportCompany> {
@@ -53,19 +52,15 @@ export class TransportCompanyService {
 
   async savePackage(packageToSave: Package): Promise<Package> {
     const newPackage = new this.packageWriteModel(packageToSave);
-    this.amqpConnection.publish<any>(
+    this.amqpConnection.publish<any>(      
       'BALLpuntcom',
       'transportPackage-created',
-      newPackage
+      {pattern: 'transportPackage-created', payload: newPackage}
     );
     return newPackage.save();
   }
 
-  @RabbitSubscribe({
-    exchange: 'BALLpuntcom',
-    routingKey: 'transportPackage-created',
-    queue: 'transport',
-  })
+  @OnEvent('transportPackage-created')
   public async savePackageInRead(msg: any) : Promise<Package>{
     console.log('IN THE TRANSPORT PACKAGE CREATED HANDLER');
     console.log(msg);
@@ -73,11 +68,7 @@ export class TransportCompanyService {
     return newPackage.save();
   }
 
-  @RabbitSubscribe({
-    exchange: 'BALLpuntcom',
-    routingKey: 'package-created',
-    queue: 'transport',
-  })
+  @OnEvent('package-created')
   public async packageCreatedHandler(msg: any) {
 
     try {
