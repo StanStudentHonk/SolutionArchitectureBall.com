@@ -3,10 +3,10 @@ import { HydratedDocument } from 'mongoose';
 import { Supplier } from '../write-schemas/supplier.schema';
 import { ItemSize } from '../structs/size.enum';
 
-export type AssortmentItemDocument = HydratedDocument<AssortmentItem>;
+export type ItemChangedDocument = HydratedDocument<ItemChanged>;
 
 @Schema()
-export class AssortmentItem {
+export class ItemChanged {
 
   @Prop()
   name: string;
@@ -22,9 +22,6 @@ export class AssortmentItem {
 
   @Prop()
   price: number;
-
-  @Prop()
-  amount: number;
 }
 
-export const AssortmentItemSchema = SchemaFactory.createForClass(AssortmentItem);
+export const ItemStockChangedSchema = SchemaFactory.createForClass(ItemChanged);

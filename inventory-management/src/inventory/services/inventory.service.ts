@@ -2,7 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { AddItemStockToInventoryCommand } from '../commands/impl/add-item-stock-to-inventory-supplier.command';
 import { AddItemToInventoryCommand } from '../commands/impl/add-item-to-inventory.command';
-import { GetItemsQuery } from '../queries/impl/get-items-query';
+import { GetItemsQuery } from '../queries/impl/get-items-highest-stock.query';
+import { GetItemsHighestStockQuery } from '../queries/impl/get-items.query';
 import { Item } from '../schemas/write-schemas/item.schema';
 
 @Injectable()
@@ -22,6 +23,10 @@ export class InventoryService {
 
     getItemsFromCollection() { 
       return this.queryBus.execute(new GetItemsQuery(20));
+    };
+
+    getHighestStockOfItem(itemId : string) { 
+      return this.queryBus.execute(new GetItemsHighestStockQuery(itemId));
     };
 }
  

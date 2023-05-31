@@ -10,12 +10,12 @@ export class ItemStockChangedUpdateItemCollectionHandler implements IEventHandle
 
   async handle(event: ItemStockChangedEvent) {
     const item = event.item
-    const totalToUpdate = event.updatedWareHouses.reduce(this.getTotalUpdated, 0);
+    const totalToRemove = event.updatedWareHouses.reduce(this.getTotalUpdated, 0);
   
     const exist = await this.repository.assortmentItemExist(event.item['_id'])
     if(!exist){
       let assortmentItem : AssortmentItem = {
-        amount : totalToUpdate, 
+        amount : totalToRemove * -1, 
         itemCode : item.itemCode,
         name : item.itemCode,
         price : item.price,
@@ -26,7 +26,7 @@ export class ItemStockChangedUpdateItemCollectionHandler implements IEventHandle
       this.repository.addItemToAssortment(assortmentItem)
     }
     else{
-      this.repository.updateAssortmentItem(event.item['_id'], totalToUpdate);
+      this.repository.updateAssortmentItem(event.item['_id'], totalToRemove);
     }
   }
 

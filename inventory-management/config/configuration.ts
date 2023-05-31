@@ -9,7 +9,9 @@ let config = {
   },
   mongodb: {
     read: "",
-    write: ""
+    write: "",
+    eventStore: ""
+
   }
 };
 
@@ -22,7 +24,8 @@ let devConfig = {
     },
     mongodb: {
       read: "mongodb://localhost:27017/inventory-management-read",
-      write: "mongodb://localhost:27017/inventory-management-write"
+      write: "mongodb://localhost:27017/inventory-management-write",
+      eventStore: "mongodb://localhost:27017/inventory-management-event-store"
     }
 }
 let prodConfig = {
@@ -34,7 +37,8 @@ let prodConfig = {
     },
     mongodb: {
       read: "mongodb://mongo-inventory-management:27017/inventory-management-read",
-      write: "mongodb://mongo-inventory-management:27017/inventory-management-write"
+      write: "mongodb://mongo-inventory-management:27017/inventory-management-write",
+      eventStore: "mongodb://mongo-inventory-management:27017/inventory-management-event-store"
     }
 }
 if (env === 'development') {

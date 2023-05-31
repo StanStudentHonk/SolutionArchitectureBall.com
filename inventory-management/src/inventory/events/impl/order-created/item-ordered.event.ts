@@ -1,3 +1,5 @@
+import { ItemSize } from "src/inventory/schemas/structs/size.enum";
+
 export class itemOrderedEvent {
        constructor(
         public readonly _id : string,

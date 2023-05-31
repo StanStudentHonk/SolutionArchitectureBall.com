@@ -1,6 +1,6 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { GetItemsQuery } from '../impl/get-items-query';
-import { InventoryRepository} from '../../repository/inventory.repository';
+import { InventoryRepository } from '../../repository/inventory.repository';
+import { GetItemsQuery } from '../impl/get-items-highest-stock.query';
 
 
 @QueryHandler(GetItemsQuery)
