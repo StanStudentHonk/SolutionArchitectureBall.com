@@ -8,15 +8,6 @@ import { PackageService } from './package.service';
 export class PackageController {
   constructor(private readonly amqpConnection: AmqpConnection, private readonly packageService: PackageService) {}
   
-  @Post()
-  async createPackage(@Body() PackageData: Package) {
-    // Add to the mongoDB
-    const createdPackage = await this.packageService.createPackage(PackageData);
-    // Publish the Package to the exchange
-    this.amqpConnection.publish<Package>('BALLpuntcom', 'package-created', createdPackage);
-    return createdPackage;
-  }
-
   @Get() 
   async getPackages() {
     // Add to the mongoDB
