@@ -3,6 +3,7 @@ import { Body, Controller, Get, Post } from '@nestjs/common';
 import { EventPattern } from '@nestjs/microservices';
 import { Package } from './schemas/package.schema';
 import { PackageService } from './package.service';
+import { Order } from './schemas/order.schema';
 
 @Controller('package')
 export class PackageController {

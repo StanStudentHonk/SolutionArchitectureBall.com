@@ -5,6 +5,7 @@ import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
 import configuration from 'config/configuration';
 import { TransportCompany, TransportCompanySchema } from './schemas/transportCompany.schema';
 import { TransportCompanyService as TransportCompanyService } from './transportCompany.service';
+import { Package, PackageSchema } from './schemas/package.schema';
 
 @Module({
   imports: [
@@ -31,6 +32,8 @@ import { TransportCompanyService as TransportCompanyService } from './transportC
       [{ name: TransportCompany.name, schema: TransportCompanySchema }],
       'transports-write',
     ),
+    MongooseModule.forFeature([{ name: Package.name, schema: PackageSchema }], 'transports-read'),
+    MongooseModule.forFeature([{ name: Package.name, schema: PackageSchema }], 'transports-write'),
   ],
   controllers: [TransportCompanyController],
   providers: [TransportCompanyService],

@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, ObjectId, SchemaTypes } from 'mongoose';
 
-import { Package, ItemSchema as PackageSchema } from './package.schema';
+import { Package, PackageSchema as PackageSchema } from './package.schema';
 
 export type TransportDocument = HydratedDocument<TransportCompany>;
 

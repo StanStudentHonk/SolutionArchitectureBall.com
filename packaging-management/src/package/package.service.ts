@@ -19,12 +19,14 @@ export class PackageService {
     private readonly packageWriteModel: Model<Package>,
   ) {}
 
-  async createPackage(givenPackage: Package): Promise<Package> {
+  async createPackage(givenPackage: Package, order : Order): Promise<Package> {
     const newPackage = new this.packageWriteModel(givenPackage);
-    this.amqpConnection.publish<Package>(
+    let event = {package: newPackage , order: order}
+    this.amqpConnection.publish<any>(
       'BALLpuntcom',
       'package-created',
-      newPackage,
+      event
+   
     );
     return newPackage.save();
   }
@@ -48,7 +50,7 @@ export class PackageService {
     console.log("Message.payload.items[0].updatedWareHouses: ");
     console.log(message.payload.items[0].updatedWareHouses);
     
-    const order = msg.payload.order;
+    let order: Order = msg.payload.order;
     //check if order has delivery address
     if (order.deliveryAddress == undefined) {
       console.log("Order has no delivery address");
@@ -79,7 +81,7 @@ export class PackageService {
       console.log(item);
       //check if item has weight
       if (item[0].weight == undefined) {
-        item[0].weight = 0;
+        item[0].weight = 1;
       }
       
       warehouses.get(warehouse).push(item);
@@ -119,7 +121,8 @@ export class PackageService {
       for (const packageToSave of Packages) {
         console.log("packageSend: -_-_-_-_-_-_-_-_-_-_-_-_-");
         console.log(packageToSave);
-        await this.createPackage(packageToSave);
+        
+        await this.createPackage(packageToSave, order);
       }
     }
 
@@ -144,7 +147,7 @@ export class PackageService {
       function CreateLarges() {
         for (let i = 0; i < amountOfLargePackages; i++) {
           const newPackage: Package = {
-            Adress: order.deliveryAddress,
+            Address: order.deliveryAddress,
             items: new Map(),
             Warehouse: warehouse[0],
             WeightInKg: 0,
@@ -181,7 +184,7 @@ export class PackageService {
       function CreateMediums() {
         for (let i = 0; i < amountOfMediumPackages; i++) {
           const newPackage: Package = {
-            Adress: order.deliveryAddress,
+            Address: order.deliveryAddress,
             items: new Map(),
             Warehouse: warehouse[0],
             WeightInKg: 0,
@@ -210,7 +213,7 @@ export class PackageService {
 
       for (let i = 0; i < amountOfLargePackages; i++) {
         const newPackage: Package = {
-          Adress: order.deliveryAddress,
+          Address: order.deliveryAddress,
           items: new Map([[itemFromWarehouse[0], maxAmountOfSmallsInOneLarge]]),
           Warehouse: warehouse[0],
           WeightInKg: 64 * itemFromWarehouse[0].weight,
@@ -228,7 +231,7 @@ export class PackageService {
 
       for (let i = 0; i < amountOfMediumPackages; i++) {
         const newPackage: Package = {
-          Adress: order.deliveryAddress,
+          Address: order.deliveryAddress,
           items: new Map([[itemFromWarehouse[0], maxAmountOfMediumsInOneLarge]]),
           Warehouse: warehouse,
           WeightInKg: 8 * itemFromWarehouse[0].weight,
@@ -239,7 +242,7 @@ export class PackageService {
 
       for (let i = 0; i < itemsLeft2; i++) {
         const newPackage: Package = {
-          Adress: order.deliveryAddress,
+          Address: order.deliveryAddress,
           items: new Map([[itemFromWarehouse[0], maxAmountOfMediumsInOneLarge]]),
           Warehouse: warehouse,
           WeightInKg: itemFromWarehouse[0].weight,
@@ -262,7 +265,7 @@ export class PackageService {
       for (let i = 0; i < amountOfLargePackages; i++) {
         console.log('largepackage has '+ order.deliveryAddress);
         const newPackage: Package = {
-          Adress: order.deliveryAddress,
+          Address: order.deliveryAddress,
           items: new Map([[itemFromWarehouse[0], maxAmountOfMediumsInOneLarge]]),
           Warehouse: warehouse,
           WeightInKg: 8 * itemFromWarehouse[0].weight,
@@ -274,7 +277,7 @@ export class PackageService {
       for (let i = 0; i < itemsLeft; i++) {
         console.log('medium has '+ order.deliveryAddress);
         const newPackage: Package = {
-          Adress: order.deliveryAddress,
+          Address: order.deliveryAddress,
           items: new Map([[itemFromWarehouse[0], maxAmountOfMediumsInOneLarge]]),
           Warehouse: warehouse,
           WeightInKg: itemFromWarehouse[0].weight,
@@ -293,7 +296,7 @@ export class PackageService {
       
       for (let i = 0; i < itemFromWarehouse[1]; i++) {
         const newPackage: Package = {
-          Adress: order.deliveryAddress,
+          Address: order.deliveryAddress,
           items: new Map([[itemFromWarehouse[0], maxAmountOfLargesInOneLarge]]),
           Warehouse: warehouse,
           WeightInKg: maxAmountOfLargesInOneLarge * itemFromWarehouse[0].weight,
