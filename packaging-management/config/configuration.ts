@@ -21,8 +21,8 @@ let devConfig = {
         queue: "ball-com.package-management"
     },
     mongodb: {
-      read: "mongodb://localhost:27018/package-management-read",
-      write: "mongodb://localhost:27018/package-management-write"
+      read: "mongodb://localhost:27020/package-management-read",
+      write: "mongodb://localhost:27020/package-management-write"
     }
 }
 let prodConfig = {
@@ -33,8 +33,8 @@ let prodConfig = {
         queue: "ball-com.package-management"
     },
     mongodb: {
-      read: "mongodb://mongo-package-management:27017/package-management-read",
-      write: "mongodb://mongo-package-management:27017/package-management-write"
+      read: "mongodb://mongo-packaging-management:27017/package-management-read",
+      write: "mongodb://mongo-packaging-management:27017/package-management-write"
     }
 }
 if (env === 'development') {
