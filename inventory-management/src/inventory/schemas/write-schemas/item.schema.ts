@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 import { Supplier } from './supplier.schema';
 import { WareHouseStock, WareHouseStockSchema } from './warehouse-stock.schema';
+import { ItemSize } from '../structs/size.enum';
 
 export type ItemDocument = HydratedDocument<Item>;
 
