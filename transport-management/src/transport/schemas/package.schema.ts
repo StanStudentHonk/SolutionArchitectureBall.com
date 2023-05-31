@@ -28,6 +28,9 @@ export class Package {
 
   @Prop({ required: true })
   TransportPrice: number;
+
+  @Prop({ required: true })
+  Customer: string;
 }
 
 export const PackageSchema = SchemaFactory.createForClass(Package);

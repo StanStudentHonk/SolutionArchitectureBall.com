@@ -35,6 +35,8 @@ export class TransportCompanyService {
     queue: 'transport',
   })
   public async changeItemStockBasedOnOrder(event: RabbitMQEvent) {
+    console.log('IN THE TRANSPORT PACKAGE CREATED HANDLER');
+    console.log(event);
     this.eventEmitter.emit(
       event['pattern'],
       event['payload']
@@ -62,7 +64,7 @@ export class TransportCompanyService {
 
   @OnEvent('transportPackage-created')
   public async savePackageInRead(msg: any) : Promise<Package>{
-    console.log('IN THE TRANSPORT PACKAGE CREATED HANDLER');
+    console.log('IN THE savePackageInRead HANDLER');
     console.log(msg);
     const newPackage = new this.packageReadModel(msg);
     return newPackage.save();
@@ -70,7 +72,7 @@ export class TransportCompanyService {
 
   @OnEvent('package-created')
   public async packageCreatedHandler(msg: any) {
-
+    console.log('IN THE packageCreatedHandler HANDLER');
     try {
       const givenPackage: Package = msg.package;
       // Retrieve transport companies from the database  
@@ -78,9 +80,8 @@ export class TransportCompanyService {
       givenPackage.TransportCompany = cheapestCompanyAndPrice[0];
       
       givenPackage.EstimatedDeliveryDate = msg.order.deliveryDate;
+      givenPackage.Customer = msg.order.customer.name;
       
-      console.log("____________ __________ __________________")
-      console.log(cheapestCompanyAndPrice);
       givenPackage.TransportPrice = cheapestCompanyAndPrice[1];
     
       //save the package to the database

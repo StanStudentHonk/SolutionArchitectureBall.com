@@ -25,8 +25,7 @@ export class PackageService {
     this.amqpConnection.publish<any>(
       'BALLpuntcom',
       'package-created',
-      event
-   
+      {pattern: 'package-created', payload: event}
     );
     return newPackage.save();
   }

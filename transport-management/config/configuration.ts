@@ -21,8 +21,8 @@ let devConfig = {
         queue: "ball-com.transport-management"
     },
     mongodb: {
-      read: "mongodb://localhost:27018/transport-management-read",
-      write: "mongodb://localhost:27018/transport-management-write"
+      read: "mongodb://localhost:27021/transport-management-read",
+      write: "mongodb://localhost:27021/transport-management-write"
     }
 }
 let prodConfig = {

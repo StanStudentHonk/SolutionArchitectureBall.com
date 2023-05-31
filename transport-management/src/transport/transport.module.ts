@@ -6,6 +6,7 @@ import configuration from 'config/configuration';
 import { TransportCompany, TransportCompanySchema } from './schemas/transportCompany.schema';
 import { TransportCompanyService as TransportCompanyService } from './transportCompany.service';
 import { Package, PackageSchema } from './schemas/package.schema';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { Package, PackageSchema } from './schemas/package.schema';
       [{ name: TransportCompany.name, schema: TransportCompanySchema }],
       'transports-write',
     ),
+    EventEmitterModule.forRoot(),
     MongooseModule.forFeature([{ name: Package.name, schema: PackageSchema }], 'transports-read'),
     MongooseModule.forFeature([{ name: Package.name, schema: PackageSchema }], 'transports-write'),
   ],
