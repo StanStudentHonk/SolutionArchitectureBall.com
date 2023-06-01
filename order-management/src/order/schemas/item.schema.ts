@@ -1,10 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, ObjectId, SchemaTypes } from 'mongoose';
+import { HydratedDocument, ObjectId, SchemaTypes, Types } from 'mongoose';
 
 export type ItemDocument = HydratedDocument<Item>;
 
 @Schema()
 export class Item {
+
+  @Prop({ type: SchemaTypes.ObjectId })
+  _id: Types.ObjectId
 
   @Prop()
   name: string;
@@ -16,7 +19,7 @@ export class Item {
   size: ItemSize;
 
   @Prop()
-  amount: number;
+  weight: number;
 
   @Prop()
   price: number;

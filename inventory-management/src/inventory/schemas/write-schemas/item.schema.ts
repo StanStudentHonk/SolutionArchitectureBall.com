@@ -31,6 +31,9 @@ export class Item {
 
   @Prop()
   price: number;
+
+  @Prop()
+  weight: number;
 }
 
 export const ItemSchema = SchemaFactory.createForClass(Item);
