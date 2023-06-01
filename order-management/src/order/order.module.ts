@@ -6,6 +6,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
 import configuration from 'config/configuration';
 import { Order, OrderSchema } from './schemas/order.schema';
+import { Item, ItemSchema } from './schemas/item.schema';
 
 @Module({
   imports: [
@@ -32,6 +33,8 @@ import { Order, OrderSchema } from './schemas/order.schema';
       [{ name: Order.name, schema: OrderSchema }],
       'orders-write',
     ),
+    MongooseModule.forFeature([{ name: Item.name, schema: ItemSchema }], 'orders-read'),
+    MongooseModule.forFeature([{ name: Item.name, schema: ItemSchema }], 'orders-write'),
     EventEmitterModule.forRoot(),
   ],
   controllers: [OrderController],

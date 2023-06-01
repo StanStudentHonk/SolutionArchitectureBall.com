@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, ObjectId, SchemaTypes } from 'mongoose';
 import { Customer } from './customer.schema';
 import { Item, ItemSchema } from './item.schema';
+import { ItemOrdered, ItemOrderedSchema } from './itemOrdered.schema';
 
 export type OrderDocument = HydratedDocument<Order>;
 
@@ -13,11 +14,11 @@ export class Order {
 
   @Prop(
     {
-      type: [ItemSchema],
+      type: [ItemOrderedSchema],
       required: true,
     }
   )
-  items: Item[];
+  itemsOrdered: ItemOrdered[];
 
   @Prop({default: Date.now})
   orderDate: Date;
